@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jumpycat.github.io</id>
     <title>Jumpycat</title>
-    <updated>2019-11-22T10:07:19.372Z</updated>
+    <updated>2019-11-22T10:12:59.619Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jumpycat.github.io"/>
     <link rel="self" href="https://jumpycat.github.io/atom.xml"/>
@@ -16,7 +16,11 @@
         <link href="https://jumpycat.github.io/post/pi-liang-jiang-shi-pin-shu-ju-zhuan-huan-wei-png-tu-xiang-de-gong-ju">
         </link>
         <updated>2019-11-22T10:06:08.000Z</updated>
-        <content type="html"><![CDATA[<pre><code>import cv2
+        <content type="html"><![CDATA[<pre><code>&quot;源文件下包含两个大类文件夹&quot;
+&quot;大类文件夹下是视频文件&quot;
+&quot;转换后文件夹结构与名称保持与源文件一样&quot;
+&quot;每个视频转换为同名文件夹，其下是帧图像(PNG)&quot;
+import cv2
 import os
 
 def ReadParentsPath(path):#return paerents folder of classes
@@ -78,7 +82,7 @@ if __name__ == &quot;__main__&quot;:
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[做视频二分类时的读数据工具]]></title>
+        <title type="html"><![CDATA[做视频二分类时的读数据的工具]]></title>
         <id>https://jumpycat.github.io/post/zuo-shi-pin-er-fen-lei-shi-de-du-shu-ju-gong-ju</id>
         <link href="https://jumpycat.github.io/post/zuo-shi-pin-er-fen-lei-shi-de-du-shu-ju-gong-ju">
         </link>
@@ -116,6 +120,8 @@ def ReadPic_shuffle(pth):
 
 def CreatData_shuffle(path,video_n,frame_n,mode):
 #model represents video or image classification
+#video_n 表示总共读取多少视频
+#frame_n 选取前多少张图像
     if mode == 0:
         video_frame = [] #2-D list[video[frame]]
         label = []
@@ -164,6 +170,9 @@ def CreatData_shuffle(path,video_n,frame_n,mode):
                 data[i][:, :, :] = img[:, :, :]
         label = np.array(label)
         return data, label, image_n, shape_1, shape_2, shape_3
+
+if __name__=='__main__':
+    data, label, image_n, shape_1, shape_2, shape_3 = CreatData_shuffle(r&quot;D:\FaceSpoofDetection\data&quot;,100,90,0)
         ```</code></pre>
 ]]></content>
     </entry>

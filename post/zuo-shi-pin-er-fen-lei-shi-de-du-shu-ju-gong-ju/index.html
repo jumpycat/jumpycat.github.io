@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8" >
 
-<title>做视频二分类时的读数据工具 | Jumpycat</title>
+<title>做视频二分类时的读数据的工具 | Jumpycat</title>
 <meta name="description" content="去你妈的">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jumpycat.github.io/favicon.ico?v=1574417231565">
+<link rel="shortcut icon" href="https://jumpycat.github.io/favicon.ico?v=1574417577994">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jumpycat.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://jumpycat.github.io">
-        <img src="https://jumpycat.github.io/images/avatar.png?v=1574417231565" class="site-logo">
+        <img src="https://jumpycat.github.io/images/avatar.png?v=1574417577994" class="site-logo">
         <h1 class="site-title">Jumpycat</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -92,7 +92,7 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">做视频二分类时的读数据工具</h2>
+            <h2 class="post-title">做视频二分类时的读数据的工具</h2>
             <div class="post-date">2019-11-22</div>
             
             <div class="post-content">
@@ -129,6 +129,8 @@ def ReadPic_shuffle(pth):
 
 def CreatData_shuffle(path,video_n,frame_n,mode):
 #model represents video or image classification
+#video_n 表示总共读取多少视频
+#frame_n 选取前多少张图像
     if mode == 0:
         video_frame = [] #2-D list[video[frame]]
         label = []
@@ -177,6 +179,9 @@ def CreatData_shuffle(path,video_n,frame_n,mode):
                 data[i][:, :, :] = img[:, :, :]
         label = np.array(label)
         return data, label, image_n, shape_1, shape_2, shape_3
+
+if __name__=='__main__':
+    data, label, image_n, shape_1, shape_2, shape_3 = CreatData_shuffle(r&quot;D:\FaceSpoofDetection\data&quot;,100,90,0)
         ```</code></pre>
 
             </div>
