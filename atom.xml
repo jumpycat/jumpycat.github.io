@@ -1,19 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>http://localhost:4000</id>
+    <id>https://jumpycat.github.io</id>
     <title>Jumpycat</title>
-    <updated>2019-10-10T01:27:58.813Z</updated>
+    <updated>2019-11-22T06:09:45.676Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="http://localhost:4000"/>
-    <link rel="self" href="http://localhost:4000/atom.xml"/>
+    <link rel="alternate" href="https://jumpycat.github.io"/>
+    <link rel="self" href="https://jumpycat.github.io/atom.xml"/>
     <subtitle>去你妈的</subtitle>
-    <logo>http://localhost:4000/images/avatar.png</logo>
-    <icon>http://localhost:4000/favicon.ico</icon>
+    <logo>https://jumpycat.github.io/images/avatar.png</logo>
+    <icon>https://jumpycat.github.io/favicon.ico</icon>
     <rights>All rights reserved 2019, Jumpycat</rights>
     <entry>
+        <title type="html"><![CDATA[做视频二分类时的读数据工具]]></title>
+        <id>https://jumpycat.github.io/post/zuo-shi-pin-er-fen-lei-shi-de-du-shu-ju-gong-ju</id>
+        <link href="https://jumpycat.github.io/post/zuo-shi-pin-er-fen-lei-shi-de-du-shu-ju-gong-ju">
+        </link>
+        <updated>2019-11-22T05:58:45.000Z</updated>
+        <content type="html"><![CDATA[<p>import os<br>
+import cv2<br>
+import numpy as np<br>
+import random</p>
+<p>&quot;读数据的代码段，给一个文件夹 下面包含real/fake两个大文件夹，在下面各自是video里面的帧图像&quot;<br>
+&quot;mode 0是返回视频结构(sample,frame,height,width,channel) mode 1 返回图像结构（images，height,width,channel)&quot;<br>
+&quot;结果均是shuffle后的&quot;<br>
+&quot;1/255归一化&quot;</p>
+<p>#fake and real totally<br>
+def ReadPath_shuffle(path,video_n):<br>
+path_list = []<br>
+for root,dirs,files in os.walk(path):<br>
+for file in dirs:<br>
+path_list.append(os.path.join(root,file))<br>
+path_list.remove(path_list[0])<br>
+path_list.remove(path_list[0])<br>
+random.shuffle(path_list)<br>
+return path_list[:video_n] #return paths of video_frame folder</p>
+<p>def ReadPic_shuffle(pth):<br>
+file_list = []<br>
+for root,dirs,files in os.walk(pth):<br>
+files.sort(key= lambda x:int(x[:-4]))<br>
+for file in files:<br>
+file_list.append(os.path.join(root,file))<br>
+return file_list #paths of frames in video_frame folder</p>
+<p>def CreatData_shuffle(path,video_n,frame_n,mode):#model represents video or image classification<br>
+if mode == 0:<br>
+video_frame = [] #2-D list[video[frame]]<br>
+label = []<br>
+path_list = ReadPath_shuffle(path,video_n)<br>
+for pth in path_list:<br>
+if 'fake' in pth:<br>
+label.append(0)<br>
+else:<br>
+label.append(1)<br>
+pths = ReadPic_shuffle(pth)<br>
+video_frame.append(pths)<br>
+video_n = len(video_frame)<br>
+img = cv2.imread(video_frame[0][0])<br>
+shape_1,shape_2,shape_3 = img.shape<br>
+data = np.zeros((video_n,frame_n,shape_1,shape_2,shape_3))<br>
+for i in range(video_n):<br>
+for j in range(frame_n):<br>
+img = cv2.imread(video_frame[i][j])/255.0<br>
+data[i][j][:,:,:] = img[:,:,:]<br>
+label = np.array(label)<br>
+return data,label,frame_n,shape_1,shape_2,shape_3</p>
+<pre><code>if mode == 1:
+    video_frame_total = []  # 1-D list[video_frames]
+    label = []
+    path_list = ReadPath_shuffle(path, video_n)
+
+    for pth in path_list:
+        pths = ReadPic_shuffle(pth)[:frame_n]
+        video_frame_total += pths
+
+    random.shuffle(video_frame_total)
+    for frame_pth in video_frame_total:
+        if 'fake' in frame_pth:
+            label.append(0)
+        else:
+            label.append(1)
+
+    image_n = len(video_frame_total)
+    img = cv2.imread(video_frame_total[0])
+    shape_1, shape_2, shape_3 = img.shape
+    data = np.zeros((image_n, shape_1, shape_2, shape_3))
+    print(image_n)
+    for i in range(image_n):
+            img = cv2.imread(video_frame_total[i]) / 255.0
+            data[i][:, :, :] = img[:, :, :]
+    label = np.array(label)
+    return data, label, image_n, shape_1, shape_2, shape_3</code></pre>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[Hello World]]></title>
-        <id>http://localhost:4000/post/hello-world</id>
-        <link href="http://localhost:4000/post/hello-world">
+        <id>https://jumpycat.github.io/post/hello-world</id>
+        <link href="https://jumpycat.github.io/post/hello-world">
         </link>
         <updated>2019-10-10T01:27:44.000Z</updated>
         <content type="html"><![CDATA[<p>##Hello World</p>
