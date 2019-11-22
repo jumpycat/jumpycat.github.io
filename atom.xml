@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jumpycat.github.io</id>
     <title>Jumpycat</title>
-    <updated>2019-11-22T14:10:57.530Z</updated>
+    <updated>2019-11-22T14:12:12.750Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jumpycat.github.io"/>
     <link rel="self" href="https://jumpycat.github.io/atom.xml"/>
@@ -105,110 +105,6 @@ def ReadFilePath(src_path,dis_path,IMAGE_SIZE):
 
 if __name__ == &quot;__main__&quot;:
     ReadFilePath(r'D:\FeiJianWei\NT_Data',r'D:\FeiJianWei\cropface',224)
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[检测并剪裁人脸的工具]]></title>
-        <id>https://jumpycat.github.io/post/jian-ce-bing-jian-cai-ren-lian-de-gong-ju</id>
-        <link href="https://jumpycat.github.io/post/jian-ce-bing-jian-cai-ren-lian-de-gong-ju">
-        </link>
-        <updated>2019-11-22T12:15:08.000Z</updated>
-        <content type="html"><![CDATA[<pre><code>import os,sys
-import cv2
-import dlib
-import numpy as np
-import shutil
-IMAGE_SIZE=224
-
-detector = dlib.get_frontal_face_detector()
-def cropface(path_read,dst_path):
-    id=0
-    print(path_read)
-    startx=0
-    starty=0
-    for file_name in os.listdir(path_read):
-        id=id+1
-        #aa是图片的全路径
-        aa=path_read+file_name
-        #读入的图片的路径中含非英文
-        img=cv2.imdecode(np.fromfile(aa, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
-        #获取图片的宽高
-        img_shape=img.shape
-        img_height=img_shape[0]
-        img_width=img_shape[1]
-    
-        # dlib检测
-        dets = detector(img,1)
-        # print(&quot;人脸数：&quot;, len(dets))
-        if len(dets)==0:
-            # print(file_name)
-            continue
-        if len(dets)&gt;1:
-            print(aa)
-        max_area=0
-
-        for faceid in range(len(dets)):
-            d=dets[faceid]
-            # 计算矩形大小
-            # (x,y), (宽度width, 高度height)
-            pos_start = tuple([d.left(), d.top()])
-            pos_end = tuple([d.right(), d.bottom()])
-
-            # 计算矩形框大小
-            height = d.bottom()-d.top()
-            width = d.right()-d.left()
-            area=height*width
-            if area &gt; max_area:
-                max_area=area
-                centerx=int((d.bottom()+d.top())/2)
-                centery=int((d.right()+d.left())/2)
-                startx=centerx-IMAGE_SIZE//2
-                starty=centery-IMAGE_SIZE//2
-                if startx&lt;0:
-                    startx=0
-                elif startx+IMAGE_SIZE&gt;img_height:
-                    startx=img_height-IMAGE_SIZE
-                if starty&lt;0:
-                    starty=0
-                elif starty+IMAGE_SIZE&gt;img_width:
-                    starty=img_width-IMAGE_SIZE
-                # 根据人脸大小生成空的图像
-                img_blank = np.zeros((IMAGE_SIZE, IMAGE_SIZE, 3), np.uint8)
-
-                for i in range(IMAGE_SIZE):
-                    for j in range(IMAGE_SIZE):
-                        img_blank[i][j] = img[startx+i][starty+j]
-
-                # img_blank = cv2.resize(img_blank, (200, 200), interpolation=cv2.INTER_CUBIC)
-                cv2.imencode('.jpg', img_blank)[1].tofile(dst_path+file_name) # 正确方法
-        break
-    fileid=0
-    for file_name in os.listdir(path_read):
-        # print(fileid)
-        fileid+=1
-        #aa是图片的全路径
-        aa=path_read+file_name
-        #读入的图片的路径中含非英文
-        img=cv2.imdecode(np.fromfile(aa, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
-        img_blank=img[startx:startx+IMAGE_SIZE,starty:starty+IMAGE_SIZE,:]
-        cv2.imencode('.jpg', img_blank)[1].tofile(dst_path+file_name) # 正确方法
-
-i=0
-path='/data_ssd/FaceForensic++/DeepFakeDetection_img/'
-target='/data_ssd/FaceForensic++/DeepFakeDetection_img_crop224/'
-need=[]
-for filepath in os.listdir(path):
-    for c in os.listdir(path+filepath):
-        d=os.listdir(path+filepath+'/'+c)
-        print(len(d))
-        for imgfolder in os.listdir(path+filepath+'/'+c):
-            if not os.path.exists(target+filepath+'/'+c+'/'+imgfolder):
-                os.makedirs(target+filepath+'/'+c+'/'+imgfolder)
-            tpath=path+filepath+'/'+c+'/'+imgfolder+'/'
-            targetpath=target+filepath+'/'+c+'/'+imgfolder+'/'
-            cropface(tpath,targetpath)
-            print(imgfolder+'finished')
 </code></pre>
 ]]></content>
     </entry>
@@ -384,7 +280,7 @@ if __name__=='__main__':
         <link href="https://jumpycat.github.io/post/hello-world">
         </link>
         <updated>2019-10-10T01:27:44.000Z</updated>
-        <content type="html"><![CDATA[<p>##Hello World</p>
+        <content type="html"><![CDATA[<p>噢牛批</p>
 ]]></content>
     </entry>
 </feed>
