@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>检测并剪裁人脸的工具 | Jumpycat</title>
+<meta name="description" content="去你妈的">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jumpycat.github.io/favicon.ico?v=1574424938535">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jumpycat.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://jumpycat.github.io">
+        <img src="https://jumpycat.github.io/images/avatar.png?v=1574424938535" class="site-logo">
+        <h1 class="site-title">Jumpycat</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      去你妈的
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/jumpycat" target="_blank">Jumpycat</a> | <a class="rss" href="https://jumpycat.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">检测并剪裁人脸的工具</h2>
+            <div class="post-date">2019-11-22</div>
+            
+            <div class="post-content">
+              <pre><code>import os,sys
+import cv2
+import dlib
+import numpy as np
+import shutil
+IMAGE_SIZE=224
+
+detector = dlib.get_frontal_face_detector()
+def cropface(path_read,dst_path):
+    id=0
+    print(path_read)
+    startx=0
+    starty=0
+    for file_name in os.listdir(path_read):
+        id=id+1
+        #aa是图片的全路径
+        aa=path_read+file_name
+        #读入的图片的路径中含非英文
+        img=cv2.imdecode(np.fromfile(aa, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
+        #获取图片的宽高
+        img_shape=img.shape
+        img_height=img_shape[0]
+        img_width=img_shape[1]
+    
+        # dlib检测
+        dets = detector(img,1)
+        # print(&quot;人脸数：&quot;, len(dets))
+        if len(dets)==0:
+            # print(file_name)
+            continue
+        if len(dets)&gt;1:
+            print(aa)
+        max_area=0
+
+        for faceid in range(len(dets)):
+            d=dets[faceid]
+            # 计算矩形大小
+            # (x,y), (宽度width, 高度height)
+            pos_start = tuple([d.left(), d.top()])
+            pos_end = tuple([d.right(), d.bottom()])
+
+            # 计算矩形框大小
+            height = d.bottom()-d.top()
+            width = d.right()-d.left()
+            area=height*width
+            if area &gt; max_area:
+                max_area=area
+                centerx=int((d.bottom()+d.top())/2)
+                centery=int((d.right()+d.left())/2)
+                startx=centerx-IMAGE_SIZE//2
+                starty=centery-IMAGE_SIZE//2
+                if startx&lt;0:
+                    startx=0
+                elif startx+IMAGE_SIZE&gt;img_height:
+                    startx=img_height-IMAGE_SIZE
+                if starty&lt;0:
+                    starty=0
+                elif starty+IMAGE_SIZE&gt;img_width:
+                    starty=img_width-IMAGE_SIZE
+                # 根据人脸大小生成空的图像
+                img_blank = np.zeros((IMAGE_SIZE, IMAGE_SIZE, 3), np.uint8)
+
+                for i in range(IMAGE_SIZE):
+                    for j in range(IMAGE_SIZE):
+                        img_blank[i][j] = img[startx+i][starty+j]
+
+                # img_blank = cv2.resize(img_blank, (200, 200), interpolation=cv2.INTER_CUBIC)
+                cv2.imencode('.jpg', img_blank)[1].tofile(dst_path+file_name) # 正确方法
+        break
+    fileid=0
+    for file_name in os.listdir(path_read):
+        # print(fileid)
+        fileid+=1
+        #aa是图片的全路径
+        aa=path_read+file_name
+        #读入的图片的路径中含非英文
+        img=cv2.imdecode(np.fromfile(aa, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
+        img_blank=img[startx:startx+IMAGE_SIZE,starty:starty+IMAGE_SIZE,:]
+        cv2.imencode('.jpg', img_blank)[1].tofile(dst_path+file_name) # 正确方法
+
+i=0
+path='/data_ssd/FaceForensic++/DeepFakeDetection_img/'
+target='/data_ssd/FaceForensic++/DeepFakeDetection_img_crop224/'
+need=[]
+for filepath in os.listdir(path):
+    for c in os.listdir(path+filepath):
+        d=os.listdir(path+filepath+'/'+c)
+        print(len(d))
+        for imgfolder in os.listdir(path+filepath+'/'+c):
+            if not os.path.exists(target+filepath+'/'+c+'/'+imgfolder):
+                os.makedirs(target+filepath+'/'+c+'/'+imgfolder)
+            tpath=path+filepath+'/'+c+'/'+imgfolder+'/'
+            targetpath=target+filepath+'/'+c+'/'+imgfolder+'/'
+            cropface(tpath,targetpath)
+            print(imgfolder+'finished')
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://jumpycat.github.io/tag/yD9Yq0oEu" class="tag">
+                    UTILS
+                  </a>
+                
+                  <a href="https://jumpycat.github.io/tag/o_TF27CVp" class="tag">
+                    CODE
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://jumpycat.github.io/post/pi-liang-jiang-shi-pin-shu-ju-zhuan-huan-wei-png-tu-xiang-de-gong-ju">
+                  <h3 class="post-title">
+                    批量将视频数据转换为PNG图像的工具
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
