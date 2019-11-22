@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jumpycat.github.io</id>
     <title>Jumpycat</title>
-    <updated>2019-11-22T06:46:19.388Z</updated>
+    <updated>2019-11-22T10:07:19.372Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jumpycat.github.io"/>
     <link rel="self" href="https://jumpycat.github.io/atom.xml"/>
@@ -10,6 +10,73 @@
     <logo>https://jumpycat.github.io/images/avatar.png</logo>
     <icon>https://jumpycat.github.io/favicon.ico</icon>
     <rights>All rights reserved 2019, Jumpycat</rights>
+    <entry>
+        <title type="html"><![CDATA[批量将视频数据转换为PNG图像的工具]]></title>
+        <id>https://jumpycat.github.io/post/pi-liang-jiang-shi-pin-shu-ju-zhuan-huan-wei-png-tu-xiang-de-gong-ju</id>
+        <link href="https://jumpycat.github.io/post/pi-liang-jiang-shi-pin-shu-ju-zhuan-huan-wei-png-tu-xiang-de-gong-ju">
+        </link>
+        <updated>2019-11-22T10:06:08.000Z</updated>
+        <content type="html"><![CDATA[<pre><code>import cv2
+import os
+
+def ReadParentsPath(path):#return paerents folder of classes
+    dirs_coll = []
+    root  = os.walk(path).__next__()
+    dirs_coll.append(os.path.join(root[0],root[1][0]))
+    dirs_coll.append(os.path.join(root[0], root[1][1]))
+    print(root[1][0],root[1][1])
+    return dirs_coll,root[1][0],root[1][1]
+
+def ReadFilePath(src_path,dis_path):
+    dirs_coll,Parent_class_1, Parent_class_2= ReadParentsPath(src_path)
+    if not os.path.exists(dis_path):
+        os.makedirs(dis_path)
+    class_1_pth = os.path.join(dis_path, Parent_class_1)
+    class_2_pth = os.path.join(dis_path, Parent_class_2)
+    if not os.path.exists(class_1_pth):
+        os.makedirs(class_1_pth)
+    if not os.path.exists(class_2_pth):
+        os.makedirs(class_2_pth)
+
+    file_name_list = os.listdir(dirs_coll[0])
+    for file in file_name_list:
+        print(file)
+        dst_pth = os.path.join(class_1_pth, file[:-4])
+        if not os.path.exists(dst_pth):
+            os.makedirs(dst_pth)
+        pth = os.path.join(dirs_coll[0], file)
+        capture = cv2.VideoCapture(pth)
+        ret = True
+        i = 0
+        while ret:
+            ret, frame = capture.read()
+            if ret:
+                cv2.imwrite(dst_pth + '/' + str(i) + '.png', frame)
+                i = i + 1
+        capture.release()
+        ######
+    file_name_list = os.listdir(dirs_coll[1])
+    for file in file_name_list:
+        print(file)
+        dst_pth = os.path.join(class_2_pth, file[:-4])
+        if not os.path.exists(dst_pth):
+            os.makedirs(dst_pth)
+        pth = os.path.join(dirs_coll[1], file)
+        capture = cv2.VideoCapture(pth)
+        ret = True
+        i = 0
+        while ret:
+            ret, frame = capture.read()
+            if ret:
+                cv2.imwrite(dst_pth + '/' + str(i) + '.png', frame)
+                i = i + 1
+        capture.release()
+
+if __name__ == &quot;__main__&quot;:
+    ReadFilePath(r'D:\FeiJianWei\NT_Data',r'D:\FeiJianWei\pic_data')
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[做视频二分类时的读数据工具]]></title>
         <id>https://jumpycat.github.io/post/zuo-shi-pin-er-fen-lei-shi-de-du-shu-ju-gong-ju</id>

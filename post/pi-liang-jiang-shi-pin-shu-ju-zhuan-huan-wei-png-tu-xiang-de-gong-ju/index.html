@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>做视频二分类时的读数据工具 | Jumpycat</title>
+<title>批量将视频数据转换为PNG图像的工具 | Jumpycat</title>
 <meta name="description" content="去你妈的">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -92,92 +92,69 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">做视频二分类时的读数据工具</h2>
+            <h2 class="post-title">批量将视频数据转换为PNG图像的工具</h2>
             <div class="post-date">2019-11-22</div>
             
             <div class="post-content">
-              <pre><code>import os
-import cv2
-import numpy as np
-import random
+              <pre><code>import cv2
+import os
 
-&quot;读数据的代码段，给一个文件夹 下面包含real/fake两个大文件夹&quot;
-&quot;在下面各自是video里面的帧图像&quot;
-&quot;mode 0是返回视频结构(sample,frame,height,width,channel)&quot;
-&quot;mode 1 返回图像结构（images，height,width,channel)&quot;
-&quot;结果均是shuffle后的&quot;
-&quot;1/255归一化&quot;
+def ReadParentsPath(path):#return paerents folder of classes
+    dirs_coll = []
+    root  = os.walk(path).__next__()
+    dirs_coll.append(os.path.join(root[0],root[1][0]))
+    dirs_coll.append(os.path.join(root[0], root[1][1]))
+    print(root[1][0],root[1][1])
+    return dirs_coll,root[1][0],root[1][1]
 
-#fake and real totally
-def ReadPath_shuffle(path,video_n):
-    path_list = []
-    for root,dirs,files in os.walk(path):
-        for file in dirs:
-            path_list.append(os.path.join(root,file))
-    path_list.remove(path_list[0])
-    path_list.remove(path_list[0])
-    random.shuffle(path_list)
-    return path_list[:video_n] #return paths of video_frame folder
+def ReadFilePath(src_path,dis_path):
+    dirs_coll,Parent_class_1, Parent_class_2= ReadParentsPath(src_path)
+    if not os.path.exists(dis_path):
+        os.makedirs(dis_path)
+    class_1_pth = os.path.join(dis_path, Parent_class_1)
+    class_2_pth = os.path.join(dis_path, Parent_class_2)
+    if not os.path.exists(class_1_pth):
+        os.makedirs(class_1_pth)
+    if not os.path.exists(class_2_pth):
+        os.makedirs(class_2_pth)
 
-def ReadPic_shuffle(pth):
-    file_list = []
-    for root,dirs,files in os.walk(pth):
-        files.sort(key= lambda x:int(x[:-4]))
-        for file in files:
-            file_list.append(os.path.join(root,file))
-    return file_list #paths of frames in video_frame folder
+    file_name_list = os.listdir(dirs_coll[0])
+    for file in file_name_list:
+        print(file)
+        dst_pth = os.path.join(class_1_pth, file[:-4])
+        if not os.path.exists(dst_pth):
+            os.makedirs(dst_pth)
+        pth = os.path.join(dirs_coll[0], file)
+        capture = cv2.VideoCapture(pth)
+        ret = True
+        i = 0
+        while ret:
+            ret, frame = capture.read()
+            if ret:
+                cv2.imwrite(dst_pth + '/' + str(i) + '.png', frame)
+                i = i + 1
+        capture.release()
+        ######
+    file_name_list = os.listdir(dirs_coll[1])
+    for file in file_name_list:
+        print(file)
+        dst_pth = os.path.join(class_2_pth, file[:-4])
+        if not os.path.exists(dst_pth):
+            os.makedirs(dst_pth)
+        pth = os.path.join(dirs_coll[1], file)
+        capture = cv2.VideoCapture(pth)
+        ret = True
+        i = 0
+        while ret:
+            ret, frame = capture.read()
+            if ret:
+                cv2.imwrite(dst_pth + '/' + str(i) + '.png', frame)
+                i = i + 1
+        capture.release()
 
-def CreatData_shuffle(path,video_n,frame_n,mode):
-#model represents video or image classification
-    if mode == 0:
-        video_frame = [] #2-D list[video[frame]]
-        label = []
-        path_list = ReadPath_shuffle(path,video_n)
-        for pth in path_list:
-            if 'fake' in pth:
-                label.append(0)
-            else:
-                label.append(1)
-            pths = ReadPic_shuffle(pth)
-            video_frame.append(pths)
-        video_n = len(video_frame)
-        img = cv2.imread(video_frame[0][0])
-        shape_1,shape_2,shape_3 = img.shape
-        data = np.zeros((video_n,frame_n,shape_1,shape_2,shape_3))
-        for i in range(video_n):
-            for j in range(frame_n):
-                img = cv2.imread(video_frame[i][j])/255.0
-                data[i][j][:,:,:] = img[:,:,:]
-        label = np.array(label)
-        return data,label,frame_n,shape_1,shape_2,shape_3
-
-    if mode == 1:
-        video_frame_total = []  # 1-D list[video_frames]
-        label = []
-        path_list = ReadPath_shuffle(path, video_n)
-
-        for pth in path_list:
-            pths = ReadPic_shuffle(pth)[:frame_n]
-            video_frame_total += pths
-
-        random.shuffle(video_frame_total)
-        for frame_pth in video_frame_total:
-            if 'fake' in frame_pth:
-                label.append(0)
-            else:
-                label.append(1)
-
-        image_n = len(video_frame_total)
-        img = cv2.imread(video_frame_total[0])
-        shape_1, shape_2, shape_3 = img.shape
-        data = np.zeros((image_n, shape_1, shape_2, shape_3))
-        print(image_n)
-        for i in range(image_n):
-                img = cv2.imread(video_frame_total[i]) / 255.0
-                data[i][:, :, :] = img[:, :, :]
-        label = np.array(label)
-        return data, label, image_n, shape_1, shape_2, shape_3
-        ```</code></pre>
+if __name__ == &quot;__main__&quot;:
+    ReadFilePath(r'D:\FeiJianWei\NT_Data',r'D:\FeiJianWei\pic_data')
+</code></pre>
 
             </div>
             
@@ -196,9 +173,9 @@ def CreatData_shuffle(path,video_n,frame_n,mode):
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://jumpycat.github.io/post/hello-world">
+                <a href="https://jumpycat.github.io/post/zuo-shi-pin-er-fen-lei-shi-de-du-shu-ju-gong-ju">
                   <h3 class="post-title">
-                    Hello World
+                    做视频二分类时的读数据工具
                   </h3>
                 </a>
               </div>
