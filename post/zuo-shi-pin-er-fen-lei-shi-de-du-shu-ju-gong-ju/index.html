@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jumpycat.github.io/favicon.ico?v=1574403495840">
+<link rel="shortcut icon" href="https://jumpycat.github.io/favicon.ico?v=1574403981203">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jumpycat.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://jumpycat.github.io">
-        <img src="https://jumpycat.github.io/images/avatar.png?v=1574403495840" class="site-logo">
+        <img src="https://jumpycat.github.io/images/avatar.png?v=1574403981203" class="site-logo">
         <h1 class="site-title">Jumpycat</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -96,79 +96,88 @@
             <div class="post-date">2019-11-22</div>
             
             <div class="post-content">
-              <p>import os<br>
-import cv2<br>
-import numpy as np<br>
-import random</p>
-<p>&quot;读数据的代码段，给一个文件夹 下面包含real/fake两个大文件夹，在下面各自是video里面的帧图像&quot;<br>
-&quot;mode 0是返回视频结构(sample,frame,height,width,channel) mode 1 返回图像结构（images，height,width,channel)&quot;<br>
-&quot;结果均是shuffle后的&quot;<br>
-&quot;1/255归一化&quot;</p>
-<p>#fake and real totally<br>
-def ReadPath_shuffle(path,video_n):<br>
-path_list = []<br>
-for root,dirs,files in os.walk(path):<br>
-for file in dirs:<br>
-path_list.append(os.path.join(root,file))<br>
-path_list.remove(path_list[0])<br>
-path_list.remove(path_list[0])<br>
-random.shuffle(path_list)<br>
-return path_list[:video_n] #return paths of video_frame folder</p>
-<p>def ReadPic_shuffle(pth):<br>
-file_list = []<br>
-for root,dirs,files in os.walk(pth):<br>
-files.sort(key= lambda x:int(x[:-4]))<br>
-for file in files:<br>
-file_list.append(os.path.join(root,file))<br>
-return file_list #paths of frames in video_frame folder</p>
-<p>def CreatData_shuffle(path,video_n,frame_n,mode):#model represents video or image classification<br>
-if mode == 0:<br>
-video_frame = [] #2-D list[video[frame]]<br>
-label = []<br>
-path_list = ReadPath_shuffle(path,video_n)<br>
-for pth in path_list:<br>
-if 'fake' in pth:<br>
-label.append(0)<br>
-else:<br>
-label.append(1)<br>
-pths = ReadPic_shuffle(pth)<br>
-video_frame.append(pths)<br>
-video_n = len(video_frame)<br>
-img = cv2.imread(video_frame[0][0])<br>
-shape_1,shape_2,shape_3 = img.shape<br>
-data = np.zeros((video_n,frame_n,shape_1,shape_2,shape_3))<br>
-for i in range(video_n):<br>
-for j in range(frame_n):<br>
-img = cv2.imread(video_frame[i][j])/255.0<br>
-data[i][j][:,:,:] = img[:,:,:]<br>
-label = np.array(label)<br>
-return data,label,frame_n,shape_1,shape_2,shape_3</p>
-<pre><code>if mode == 1:
-    video_frame_total = []  # 1-D list[video_frames]
-    label = []
-    path_list = ReadPath_shuffle(path, video_n)
+              <pre><code>import os
+import cv2
+import numpy as np
+import random
 
-    for pth in path_list:
-        pths = ReadPic_shuffle(pth)[:frame_n]
-        video_frame_total += pths
+&quot;读数据的代码段，给一个文件夹 下面包含real/fake两个大文件夹&quot;
+&quot;在下面各自是video里面的帧图像&quot;
+&quot;mode 0是返回视频结构(sample,frame,height,width,channel)&quot;
+&quot;mode 1 返回图像结构（images，height,width,channel)&quot;
+&quot;结果均是shuffle后的&quot;
+&quot;1/255归一化&quot;
 
-    random.shuffle(video_frame_total)
-    for frame_pth in video_frame_total:
-        if 'fake' in frame_pth:
-            label.append(0)
-        else:
-            label.append(1)
+#fake and real totally
+def ReadPath_shuffle(path,video_n):
+    path_list = []
+    for root,dirs,files in os.walk(path):
+        for file in dirs:
+            path_list.append(os.path.join(root,file))
+    path_list.remove(path_list[0])
+    path_list.remove(path_list[0])
+    random.shuffle(path_list)
+    return path_list[:video_n] #return paths of video_frame folder
 
-    image_n = len(video_frame_total)
-    img = cv2.imread(video_frame_total[0])
-    shape_1, shape_2, shape_3 = img.shape
-    data = np.zeros((image_n, shape_1, shape_2, shape_3))
-    print(image_n)
-    for i in range(image_n):
-            img = cv2.imread(video_frame_total[i]) / 255.0
-            data[i][:, :, :] = img[:, :, :]
-    label = np.array(label)
-    return data, label, image_n, shape_1, shape_2, shape_3</code></pre>
+def ReadPic_shuffle(pth):
+    file_list = []
+    for root,dirs,files in os.walk(pth):
+        files.sort(key= lambda x:int(x[:-4]))
+        for file in files:
+            file_list.append(os.path.join(root,file))
+    return file_list #paths of frames in video_frame folder
+
+def CreatData_shuffle(path,video_n,frame_n,mode):
+#model represents video or image classification
+    if mode == 0:
+        video_frame = [] #2-D list[video[frame]]
+        label = []
+        path_list = ReadPath_shuffle(path,video_n)
+        for pth in path_list:
+            if 'fake' in pth:
+                label.append(0)
+            else:
+                label.append(1)
+            pths = ReadPic_shuffle(pth)
+            video_frame.append(pths)
+        video_n = len(video_frame)
+        img = cv2.imread(video_frame[0][0])
+        shape_1,shape_2,shape_3 = img.shape
+        data = np.zeros((video_n,frame_n,shape_1,shape_2,shape_3))
+        for i in range(video_n):
+            for j in range(frame_n):
+                img = cv2.imread(video_frame[i][j])/255.0
+                data[i][j][:,:,:] = img[:,:,:]
+        label = np.array(label)
+        return data,label,frame_n,shape_1,shape_2,shape_3
+
+    if mode == 1:
+        video_frame_total = []  # 1-D list[video_frames]
+        label = []
+        path_list = ReadPath_shuffle(path, video_n)
+
+        for pth in path_list:
+            pths = ReadPic_shuffle(pth)[:frame_n]
+            video_frame_total += pths
+
+        random.shuffle(video_frame_total)
+        for frame_pth in video_frame_total:
+            if 'fake' in frame_pth:
+                label.append(0)
+            else:
+                label.append(1)
+
+        image_n = len(video_frame_total)
+        img = cv2.imread(video_frame_total[0])
+        shape_1, shape_2, shape_3 = img.shape
+        data = np.zeros((image_n, shape_1, shape_2, shape_3))
+        print(image_n)
+        for i in range(image_n):
+                img = cv2.imread(video_frame_total[i]) / 255.0
+                data[i][:, :, :] = img[:, :, :]
+        label = np.array(label)
+        return data, label, image_n, shape_1, shape_2, shape_3
+        ```</code></pre>
 
             </div>
             
