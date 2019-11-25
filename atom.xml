@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jumpycat.github.io</id>
     <title>Jumpycat</title>
-    <updated>2019-11-25T08:08:17.355Z</updated>
+    <updated>2019-11-25T13:44:54.871Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jumpycat.github.io"/>
     <link rel="self" href="https://jumpycat.github.io/atom.xml"/>
@@ -48,9 +48,6 @@ while(True):
 
 cap.release()#释放摄像头
 cv2.destroyAllWindows()#关闭所有图像窗口
-————————————————
-版权声明：本文为CSDN博主「明素07」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
-原文链接：https://blog.csdn.net/weixin_41384967/article/details/103237584
 </code></pre>
 ]]></content>
     </entry>
