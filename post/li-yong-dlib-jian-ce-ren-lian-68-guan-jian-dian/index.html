@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>关于 | Jumpycat</title>
+<title>利用Dlib检测人脸68关键点 | Jumpycat</title>
 <meta name="description" content="去你妈的">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -92,16 +92,62 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">关于</h2>
-            <div class="post-date">2019-01-25</div>
+            <h2 class="post-title">利用Dlib检测人脸68关键点</h2>
+            <div class="post-date">2019-11-25</div>
             
             <div class="post-content">
-              <h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="联系本人">📬 联系本人</h2>
+              <pre><code>&quot;shape_predictor_68_face_landmarks.dat文件：&quot;
+&quot;https://pan.baidu.com/share/init?surl=Z1a_ud__BWXgCWZeSdpL2g  密码lzjy&quot;
+import cv2
+import dlib
+
+path = &quot;1.jpg&quot; #给定人脸图像
+img = cv2.imread(path)
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+#人脸检测画框
+detector = dlib.get_frontal_face_detector()
+# 获取人脸关键点检测器
+predictor = dlib.shape_predictor(&quot;shape_predictor_68_face_landmarks.dat&quot;)
+#获取人脸框位置信息
+dets = detector(gray, 1)
+#1表示采样（upsample）次数  0识别的人脸少点,1识别的多点,2识别的更多,小脸也可以识别
+for face in dets:
+    shape = predictor(img, face)  # 寻找人脸的68个标定点
+    # 遍历所有点，打印出其坐标，并圈出来
+    for pt in shape.parts():
+        pt_pos = (pt.x, pt.y)
+        cv2.circle(img, pt_pos, 2, (0, 0, 255), 1)#img, center, radius, color, thickness
+
+    cv2.imshow(&quot;image&quot;, img)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+</code></pre>
 
             </div>
             
+              <div class="tag-container">
+                
+                  <a href="https://jumpycat.github.io/tag/R7sZPsf3c" class="tag">
+                    DEMO
+                  </a>
+                
+                  <a href="https://jumpycat.github.io/tag/o_TF27CVp" class="tag">
+                    CODE
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://jumpycat.github.io/post/jian-ce-shi-pin-zhong-ren-lian-wei-zhi-bing-jian-ce-de-gong-ju">
+                  <h3 class="post-title">
+                    检测视频中人脸位置并剪裁的工具
+                  </h3>
+                </a>
+              </div>
             
 
             
