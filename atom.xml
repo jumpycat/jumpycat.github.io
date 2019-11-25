@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jumpycat.github.io</id>
     <title>Jumpycat</title>
-    <updated>2019-11-25T06:35:27.360Z</updated>
+    <updated>2019-11-25T08:08:17.355Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jumpycat.github.io"/>
     <link rel="self" href="https://jumpycat.github.io/atom.xml"/>
@@ -10,6 +10,50 @@
     <logo>https://jumpycat.github.io/images/avatar.png</logo>
     <icon>https://jumpycat.github.io/favicon.ico</icon>
     <rights>All rights reserved 2019, Jumpycat</rights>
+    <entry>
+        <title type="html"><![CDATA[实时利用摄像头检测并标记人脸关键点]]></title>
+        <id>https://jumpycat.github.io/post/shi-shi-li-yong-she-xiang-tou-jian-ce-bing-biao-ji-ren-lian-guan-jian-dian</id>
+        <link href="https://jumpycat.github.io/post/shi-shi-li-yong-she-xiang-tou-jian-ce-bing-biao-ji-ren-lian-guan-jian-dian">
+        </link>
+        <updated>2019-11-25T08:07:35.000Z</updated>
+        <content type="html"><![CDATA[<pre><code>import cv2
+import dlib
+import numpy as np
+
+cap = cv2.VideoCapture(0)#打开笔记本的内置摄像头，若参数是视频文件路径则打开视频
+cap.isOpened()
+
+def key_points(img):
+    points_keys = []
+    PREDICTOR_PATH = &quot;shape_predictor_68_face_landmarks.dat&quot;
+    detector = dlib.get_frontal_face_detector()
+    predictor = dlib.shape_predictor(PREDICTOR_PATH)
+    rects = detector(img,1)
+
+    for i in range(len(rects)):
+        landmarks = np.matrix([[p.x,p.y] for p in predictor(img,rects[i]).parts()])
+        for point in landmarks:
+            pos = (point[0,0],point[0,1])
+            points_keys.append(pos)
+            cv2.circle(img,pos,2,(255,0,0),-1)
+    return img
+
+while(True):
+    ret, frame = cap.read()#按帧读取视频，ret,frame是cap.read()方法的两个返回值。其中ret是布尔值，如果读取帧是正确的则返回True，如果文件读取到结尾，它的返回值就为False。frame就是每一帧的图像，是个三维矩阵。
+    # gray = cv2.cvtColor(frame)
+    face_key = key_points(frame)
+    cv2.imshow('frame',face_key)
+    if cv2.waitKey(1) &amp; 0xFF == ord('q'):
+        break
+
+cap.release()#释放摄像头
+cv2.destroyAllWindows()#关闭所有图像窗口
+————————————————
+版权声明：本文为CSDN博主「明素07」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/weixin_41384967/article/details/103237584
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[利用Dlib检测人脸68关键点]]></title>
         <id>https://jumpycat.github.io/post/li-yong-dlib-jian-ce-ren-lian-68-guan-jian-dian</id>
